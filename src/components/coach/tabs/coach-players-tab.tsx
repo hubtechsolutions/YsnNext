@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCoachStore } from "@/lib/coach-store";
+import type { Player } from "@/lib/coach-store";
 import { useEventsStore } from "@/lib/events-store";
 import { api, FollowedPlayerData } from "@/lib/api";
 import { useAuthStore } from "@/lib/auth-store";
@@ -51,25 +52,7 @@ import { startDirectChatByAppId } from "@/lib/chat-service";
 import { useChatStore } from "@/lib/chat-store";
 import { toast } from "sonner";
 
-interface Player {
-  id: string;
-  fullName: string;
-  dob: string;
-  grade: string;
-  act: number | null;
-  sat: number | null;
-  gpa: number | null;
-  position: string;
-  state: string;
-  rating: number;
-  notes: string[];
-  labels: string[];
-  avatar?: string;
-  email?: string;
-  mobile?: string | null;
-  highSchool?: string | null;
-  graduatingClass?: string | null;
-}
+// Player type imported from coach-store (includes kids_id, kids_user_id, kid_user_type)
 
 interface CalendarEvent {
   id: number;
@@ -217,7 +200,7 @@ export function CoachesTab() {
     }
 
     // Find the player to get their kid_user_type
-    const player = players.find(p => p.id === playerId);
+    const player = players.find(p => p.id === playerId) as (Player & { kids_user_id?: number; kid_user_type?: number });
     if (!player) {
       console.error("Player not found");
       return;
@@ -225,9 +208,9 @@ export function CoachesTab() {
 
     try {
       const response = await api.players.followPlayer({
-        usfl_following_user_id: player.kids_user_id,
+        usfl_following_user_id: player.kids_user_id ?? 0,
         usfl_user_id: user.id,
-        usfl_following_user_type: player.kid_user_type
+        usfl_following_user_type: player.kid_user_type ?? 0
       });
 
       if (response.status) {
@@ -278,7 +261,7 @@ export function CoachesTab() {
     }
   };
 
-  const handleMessagePlayer = async (player: Player) => {
+  const handleMessagePlayer = async (player: Player & { kids_user_id?: number }) => {
     try {
       if (player.kids_user_id) {
         const chatId = await startDirectChatByAppId(

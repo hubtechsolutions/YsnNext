@@ -40,7 +40,10 @@ export async function startDirectChatByAppId(
       displayName = userData?.displayName || targetUserName;
     }
   } catch (error) {
-    console.log("Could not fetch target user displayName, using fallback:", error);
+    console.log(
+      "Could not fetch target user displayName, using fallback:",
+      error
+    );
   }
 
   const id = directConvId(myUid, targetUid);
@@ -69,18 +72,21 @@ export async function startDirectChatByAppId(
     if (displayName) {
       const existingData = snap.data();
       const currentUserNames = existingData?.userNames || {};
-      
+
       // Only update if the name is not already stored or is different
-      if (!currentUserNames[targetUid] || currentUserNames[targetUid] !== displayName) {
+      if (
+        !currentUserNames[targetUid] ||
+        currentUserNames[targetUid] !== displayName
+      ) {
         const updatedUserNames = {
           ...currentUserNames,
-          [targetUid]: displayName
+          [targetUid]: displayName,
         };
-        
+
         try {
           await updateDoc(ref, {
             userNames: updatedUserNames,
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
           });
         } catch {
           // Swallow error: conversation exists; name update is non-critical
@@ -137,10 +143,10 @@ export async function sendMessage(conversationId: string, text: string) {
   await addDoc(msgCol, {
     text,
     senderId: me.uid,
-  createdAt: serverTimestamp(),
+    createdAt: serverTimestamp(),
   });
   await updateDoc(doc(db, "conversations", conversationId), {
-  lastMessage: { text, senderId: me.uid, createdAt: serverTimestamp() },
+    lastMessage: { text, senderId: me.uid, createdAt: serverTimestamp() },
     updatedAt: serverTimestamp(),
   });
 }
