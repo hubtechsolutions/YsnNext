@@ -1,5 +1,5 @@
 import fetch from "@/lib/fetch";
-import { FriendPayload, Friends } from "@/types/friends";
+import { FriendPayload, Friends, Kid } from "@/types/friends";
 import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ export const useFriends = () => {
     frnd_address: "",
   };
 
-  const [kids, setKids] = useState<any>([]);
+  const [kids, setKids] = useState<Kid[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,10 +33,10 @@ export const useFriends = () => {
   const handleFetchFriends = async (): Promise<Friends[] | void> => {
     try {
       setLoading(true);
-      const response: AxiosResponse<Friends[] | any> = await fetch.get(
+      const response: AxiosResponse<{ data: Friends[] }> = await fetch.get(
         "/friend/lists"
       );
-      setFriends(response?.data?.data);
+      setFriends(response?.data?.data ?? []);
     } catch (error) {
       console.log("error at fetching the friends list", error);
     } finally {
@@ -115,9 +115,10 @@ export const useFriends = () => {
         handleFetchFriends();
         toast.success(message);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.log("error at while posting the user", error);
-      toast.error(error.response.data.message || "Failed to add friend");
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Failed to add friend");
     } finally {
       setSubmitting(false);
     }
@@ -137,15 +138,17 @@ export const useFriends = () => {
   // function to get all the friends
   const handleGetAllKids = async (): Promise<void> => {
     try {
-      const response = await fetch.get("/players/search");
-      setKids(response.data.data);
+      const response: AxiosResponse<{ data: Kid[] }> = await fetch.get(
+        "/players/search"
+      );
+      setKids(response.data.data ?? []);
     } catch (error) {
       console.log("error at while fetching kids info", error);
     }
   };
 
-  const handleSetFriend = (friend: Friends) => {
-    if (friend !== null) {
+  const handleSetFriend = (friend: Friends | null) => {
+    if (friend) {
       setNewFriend({
         frnd_id: friend?.frnd_id,
         plyf_kids_id: friend.plyf_kids_id,

@@ -3,7 +3,7 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Loader2 } from 'lucide-react'
-import { FriendPayload, Friends } from '@/types/friends'
+import { FriendPayload, Friends, Kid } from '@/types/friends'
 
 interface FriendFormProps {
     isEdit?: boolean;
@@ -11,11 +11,11 @@ interface FriendFormProps {
     editFriend?: Friends | null;
     handleAddFriend: (close: React.Dispatch<React.SetStateAction<boolean>>) => void;
     newFriend: FriendPayload;
-    kids: any[];
+    kids: Kid[];
     errors: Record<string, string>;
     submitting: boolean;
-    handleValueChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    handleSetFriend: any;
+    handleValueChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    handleSetFriend: (friend: Friends | null) => void;
 }
 
 export const ParentForm: React.FC<FriendFormProps> = ({
@@ -33,6 +33,7 @@ export const ParentForm: React.FC<FriendFormProps> = ({
   
     useEffect(() => {
         handleSetFriend(editFriend)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editFriend])
 
     return (
@@ -137,7 +138,7 @@ export const ParentForm: React.FC<FriendFormProps> = ({
                     >
                         <option value="null">Select Kids</option>
                         {kids.length > 0 &&
-                            kids.map((kid: any, index: number) => (
+                            kids.map((kid, index) => (
                                 <option key={index} value={kid.kids_id}>
                                     {kid.kids_lname
                                         ? `${kid.kids_fname} ${kid.kids_lname}`
