@@ -27,4 +27,11 @@ export interface FriendPayload {
     frnd_address:string;
 }
 
+// Minimal kid type used in friend/parent forms
+export interface Kid {
+  kids_id: number;
+  kids_fname: string;
+  kids_lname?: string;
+}
+
 
