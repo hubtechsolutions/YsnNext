@@ -38,5 +38,20 @@ service cloud.firestore {
         ) && request.auth.uid == resource.data.senderId;
       }
     }
+
+    // Public match chat (demo) - each match has a messages subcollection
+    match /matches/{matchId} {
+      allow read: if signedIn();
+      // Prevent arbitrary match document creation via client for demo (adjust as needed)
+      allow create: if false; 
+      allow update, delete: if false;
+
+      match /messages/{mid} {
+        // Any signed in user can read & send messages to match chat demo
+        allow read, create: if signedIn();
+        // Allow sender to edit/delete their own message (optional)
+        allow update, delete: if signedIn() && request.auth.uid == resource.data.senderId;
+      }
+    }
   }
 }

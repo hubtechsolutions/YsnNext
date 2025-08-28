@@ -78,23 +78,28 @@ export default function Streaming() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-4 gap-6 items-stretch">
+        <div className="relative">
+          {/* Unified auth overlay */}
+          {(!isAuthenticated || !user) && (
+            <div className="absolute inset-0 z-30 flex items-center justify-center">
+              <div className="bg-black/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-border text-center max-w-md mx-4">
+                <h3 className="text-lg font-semibold mb-3">Log in to Continue</h3>
+                <p className="text-foreground/90 text-sm mb-5 leading-relaxed">
+                  Sign in to watch the live stream, join the roster, and chat with others in real-time.
+                </p>
+                <Button className="rounded-full w-full" onClick={() => router.push('/login')}>Log in</Button>
+              </div>
+            </div>
+          )}
+
+          <div className={`grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-4 gap-6 items-stretch transition-filter ${(!isAuthenticated || !user) ? 'blur-sm pointer-events-none select-none' : ''}`}>        
 
           {/* Main content */}
           <div className="lg:col-span-3 xl:col-span-3 space-y-6">
             {/* Main Live Stream */}
             <Card className="border-border overflow-hidden">
               <div className="relative bg-black">
-                {/* Overlay when not logged in (positioned over the player) */}
-                {!isAuthenticated || !user ? (
-                  <div className="absolute inset-0 z-20 flex items-center justify-center">
-                    <div className="bg-black/70 backdrop-blur-sm rounded-2xl p-6 border border-border text-center max-w-md">
-                      <p className="text-foreground mb-4">Log in to jump into the streaming experience.</p>
-                      <Button className="rounded-full" onClick={() => router.push("/login")}>Log in</Button>
-                    </div>
-                  </div>
-                ) : null}
-                <div className={`min-h-[50vh] md:min-h-[60vh] lg:min-h-[70vh] ${(!isAuthenticated || !user) ? 'blur-sm pointer-events-none' : ''}`}>
+                <div className={`min-h-[50vh] md:min-h-[60vh] lg:min-h-[70vh]`}>
                   <iframe
                     src="https://www.youtube.com/embed/JaPwn7HZoIY?rel=0"
                     title="Live stream"
@@ -123,7 +128,7 @@ export default function Streaming() {
               <div className="relative">
                 <div
                   ref={sliderRef}
-                  className="flex gap-3 overflow-x-auto pb-1"
+                  className={`flex gap-3 overflow-x-auto pb-1`}
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   {sampleRosters.map((kid) => (
@@ -163,6 +168,7 @@ export default function Streaming() {
             <ChatSection className="h-full" />
           </div>
         </div>
+  </div>
       </div>
       <ShareModal
         isOpen={isShareOpen}

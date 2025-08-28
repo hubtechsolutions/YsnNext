@@ -27,24 +27,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
+          forcedTheme="dark"
           disableTransitionOnChange
         >
-          <Suspense fallback={
-            <div className="min-h-screen bg-background flex items-center justify-center">
-              <div className="text-foreground">Loading...</div>
-            </div>
-          }>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
+          <Suspense
+            fallback={
+              <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-foreground">Loading...</div>
+              </div>
+            }
+          >
+            <AuthProvider>{children}</AuthProvider>
           </Suspense>
           <Toaster />
         </ThemeProvider>

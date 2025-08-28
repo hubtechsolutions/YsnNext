@@ -243,7 +243,7 @@ export default function Navbar() {
         Log In
       </Link>
       <div>|</div>
-      <Link href="/login" className="text-white">
+      <Link href="/register" className="text-white">
         Sign Up
       </Link>
     </div>
@@ -309,13 +309,13 @@ export default function Navbar() {
   const MobileAuth = () => (
     <div className="mt-10 flex flex-col gap-4">
       <Link
-        href="https://beta.ysn.tv/login"
+        href="/login"
         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-bold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 border border-purple-500 text-white hover:border-purple-500/50 transition-all duration-300"
       >
         Log In
       </Link>
       <Link
-        href="https://beta.ysn.tv/register"
+        href="/register"
         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm ring-offset-background focus-visible:outline-none font-bold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300"
       >
         Sign Up
