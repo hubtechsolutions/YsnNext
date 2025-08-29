@@ -65,7 +65,7 @@ export default function Streaming() {
 
   return (
     <section className=" bg-black py-12 md:py-16 " id="streaming_section">
-      <div className="max-w-8xl mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between mb-4 md:mb-6">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center">
