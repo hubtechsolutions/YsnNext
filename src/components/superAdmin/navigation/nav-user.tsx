@@ -1,14 +1,14 @@
 "use client"
 
 import {
-  IconCreditCard,
   IconLogout,
-  IconNotification,
   IconUserCircle,
   IconSun,
   IconMoon,
+  IconShieldLock,
+  IconUsers,
 } from "@tabler/icons-react"
-import { useAuthStore } from "@/lib/auth-store"
+import { useAuthStore, USER_TYPE } from "@/lib/auth-store"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 
@@ -26,7 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
 
 export function NavUser({
   user,
@@ -37,7 +36,7 @@ export function NavUser({
     avatar: string
   }
 }) {
-  const { logout } = useAuthStore()
+  const { logout, user: authUser } = useAuthStore()
   const { theme, setTheme } = useTheme()
   const router = useRouter()
   
@@ -49,6 +48,13 @@ export function NavUser({
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light")
   }
+
+  // Determine role-specific menu items
+  const userType = authUser?.user_type
+  const isOrg = userType === USER_TYPE.ORGANIZATION
+  const isPlayer = userType === USER_TYPE.PLAYER
+
+  const go = (path: string) => router.push(path)
 
   return (
     <DropdownMenu>
@@ -71,17 +77,42 @@ export function NavUser({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          {/* Common: Profile */}
+          <DropdownMenuItem onClick={() => go(isPlayer ? '/player-profile' : isOrg ? '/(marketing)/organization' : '/dashboard')}>
             <IconUserCircle className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span>My Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <IconCreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <IconNotification className="mr-2 h-4 w-4" />
-            <span>Notifications</span>
+          {isOrg && (
+            <>
+              <DropdownMenuItem onClick={() => go('/admins')}>
+                <IconUsers className="mr-2 h-4 w-4" />
+                <span>Admins</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => go('/coaches')}>
+                <IconUsers className="mr-2 h-4 w-4" />
+                <span>Coaches</span>
+              </DropdownMenuItem>
+            </>
+          )}
+          {isPlayer && (
+            <>
+              <DropdownMenuItem onClick={() => go('/parents')}>
+                <IconUsers className="mr-2 h-4 w-4" />
+                <span>Parents</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => go('/family')}>
+                <IconUsers className="mr-2 h-4 w-4" />
+                <span>Family</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => go('/friends')}>
+                <IconUsers className="mr-2 h-4 w-4" />
+                <span>Friends</span>
+              </DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuItem onClick={() => go('/change-password')}>
+            <IconShieldLock className="mr-2 h-4 w-4" />
+            <span>Change Password</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={toggleTheme}>
             {theme === "light" ? (
