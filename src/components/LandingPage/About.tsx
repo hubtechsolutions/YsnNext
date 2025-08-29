@@ -1,241 +1,222 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { motion, useInView } from "motion/react";
-import Image from "next/image";
-import {
-  Gamepad2,
-  Radio,
-  Smartphone,
-  Video,
-  Users,
-  ExternalLink,
-} from "lucide-react";
+import { motion, useInView, AnimatePresence } from "motion/react";
+import { Gamepad2, Radio, Smartphone, Video, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useTheme } from "next-themes";
 
+// Updated About component styled after provided HomeTab style sample
 export default function About() {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const ref = useRef<HTMLDivElement | null>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
   const [activeTab, setActiveTab] = useState(0);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+  const { theme } = useTheme();
+  const isLightTheme = theme === "light";
 
+  // External URLs (kept similar to earlier impl)
   const websiteUrls = [
-    "https://battlelounge.io/",
-    "https://ysn.tv/",
-    "https://www.playerhub.io/",
-    "https://www.playerhub.io/",
-    "https://www.playerhub.io/",
+    "https://battlelounge.io/", // Battle Lounge
+    "https://ysn.tv/", // YSN
+    "https://www.playerhub.io/", // PlayerHub
+    "https://www.playerhub.io/", // MyReels placeholder
+    "https://www.playerhub.io/", // Connected Athlete placeholder (update if diff)
   ];
 
+  // Gradient palette adapted to requested style
   const customGradients = [
-    "from-purple-500 to-indigo-600",
-    "from-blue-600 to-indigo-600",
-    "from-teal-500 to-blue-600",
-    "from-indigo-600 to-blue-700",
-    "from-purple-500 to-teal-500",
+    "from-[#b55fc2] to-[#7b53c6]", // Battle Lounge
+    "from-[#0037c0] to-[#4755bb]", // YSN
+    "from-[#b55fc2] to-[#48c4bc]", // PlayerHub
+    "from-[#7b53c6] to-[#0037c0]", // MyReels
+    "from-[#48c4bc] to-[#4755bb]", // Connected Athlete
   ];
 
+  // Content (mapping old titles to new order used earlier)
   const technologyItems = [
     {
-      title: "Battle Lounge",
-      subtitle: "Esports Tournament Platform",
+      title: "Live Stream",
       description:
-        "A hybrid esports tournament platform merging in-person and online gameplay, allowing youth athletes to compete at our facility or remotely.",
-      icon: <Gamepad2 className="w-5 h-5" />,
+        "Battle Lounge is a hybrid esports tournament platform that merges in-person and online gameplay, allowing youth athletes and gamers to compete in popular video games at our facility's dedicated mini esports arena or remotely through our digital infrastructure. It bridges the growing overlap between traditional youth sports and competitive gaming.",
+      icon: <Gamepad2 className="w-6 h-6" />,
       color: customGradients[0],
       points: [
         {
           title: "In-Person & Online Tournaments",
           description:
-            "Host and participate in real-time esports events from anywhere. Seamlessly connects players competing locally or remotely.",
-          image: "/landing/battle-lounge-homepage.webp",
+            "Host and participate in real-time esports events from anywhere. Our platform seamlessly connects players whether they're competing from our facility or remotely.",
+          image: "/landing/battle-lounge-homepage.webp", // keep existing image path
         },
         {
           title: "Tournament Management System",
           description:
-            "Complete tournament lifecycle with registration, brackets, player tracking, and real-time updates.",
+            "Complete tournament lifecycle management with registration, brackets, player tracking, and real-time updates. Professional tournament organization made simple.",
           image: "/landing/battle-lounge-tournament.webp",
         },
         {
           title: "Personal Gaming Dashboard",
           description:
-            "Track tournament history, upcoming events, and gaming achievements with comprehensive profiles and analytics.",
+            "Track your tournament history, upcoming events, and gaming achievements. Comprehensive player profiles with statistics and performance analytics.",
           image: "/landing/battle-lounge-dashboard.webp",
         },
       ],
     },
     {
-      title: "YSN TV",
-      subtitle: "Live Streaming Platform",
+      title: "Team Chat",
       description:
-        "A live-streaming and media platform that captures every game, event, and showcase using high-definition cameras across all indoor and outdoor fields.",
-      icon: <Radio className="w-5 h-5" />,
+        "YSN is a live-streaming and media platform that captures every game, event, and showcase across our facility using high-definition cameras on all indoor and outdoor fields. It offers families, friends, and recruiters a front-row seat to every moment, from anywhere in the world.",
+      icon: <Radio className="w-6 h-6" />,
       color: customGradients[1],
       points: [
         {
           title: "Professional Live Streaming",
           description:
-            "Broadcast high-quality live streams with professional presentation and seamless viewing experience.",
+            "Broadcast high-quality live streams of matches and events with professional presentation, sponsor integration, and seamless viewing experience across all devices.",
           image: "/landing/ysn-main-stream.webp",
         },
         {
           title: "Interactive Viewing Experience",
           description:
-            "Engage with live chat, multiple camera angles, and real-time match schedules.",
+            "Engage with live chat, view multiple camera angles, and access upcoming match schedules. Real-time community interaction enhances the viewing experience.",
           image: "/landing/ysn-live-interface.webp",
         },
         {
           title: "Team Management Platform",
           description:
-            "Comprehensive team administration with rosters, match history, statistics, and coaching tools.",
+            "Comprehensive team administration with player rosters, match history, statistics tracking, and organizational tools for coaches and team managers.",
           image: "/landing/ysn-team-dashboard.webp",
         },
       ],
     },
     {
-      title: "PlayerHub",
-      subtitle: "Athlete Digital Profiles",
+      title: "eCommerce",
       description:
-        "The centralized digital profile for every athlete in our ecosystem, enabling athletes to manage schedules, track stats, register for events, and build recruitment-ready profiles.",
-      icon: <Users className="w-5 h-5" />,
-      color: customGradients[4],
+        "PlayerHub is the centralized digital profile for every athlete in our ecosystem. It allows athletes to manage their schedules, track stats, register for events, upload highlights, and build recruitment-ready profiles, serving as the digital backbone for youth sports development.",
+      icon: <Users className="w-6 h-6" />,
+      color: customGradients[2],
       points: [
         {
-          title: "Athlete Profiles & Statistics",
+          title: "Athlete Profiles & Stats",
           description:
-            "Track performance, growth, and milestones with rich data visualizations and comprehensive analytics.",
+            "Track performance, growth, and milestones across seasons. Comprehensive data visualization and progress tracking for athletes of all levels.",
           image: "/landing/playhub-profile-and-status-2.webp",
         },
         {
           title: "Event & Tournament Management",
           description:
-            "Register for events, manage schedules, and stay updated on tournaments and showcases.",
+            "Register, schedule, and stay updated on upcoming games and showcases. Seamless integration with facility calendars and team management systems.",
           image: "/landing/playhub-2.webp",
         },
         {
           title: "Recruitment & Gear Hub",
           description:
-            "Showcase highlight reels, connect with scouts, and purchase sport-specific equipment.",
+            "Showcase highlights, connect with scouts, and purchase sport-specific gear. One-stop platform for athlete development and exposure opportunities.",
           image: "/landing/playerhub-analytics.webp",
         },
       ],
     },
     {
-      title: "MyReels",
-      subtitle: "Video Production Service",
+      title: "Rosters",
       description:
-        "Professional video production service creating highlight reels and promotional content for athletes to showcase their skills and build their personal brand.",
-      icon: <Video className="w-5 h-5" />,
+        "Professional video production service creating highlight reels and promotional content for athletes.",
+      icon: <Video className="w-6 h-6" />,
       color: customGradients[3],
       points: [
         {
           title: "Recruitment Videos",
           description:
-            "Professional videos showcasing athlete skills and achievements for scouts and recruiters.",
+            "Professional recruitment videos designed to showcase athlete skills for college and professional scouts.",
           image: "/landing/myreels-football.webp",
         },
         {
           title: "Social Media Content",
           description:
-            "Optimized content for social media to help athletes build their personal brand and online presence.",
+            "Optimized video content for social media platforms to build athlete personal brands and following.",
           image: "/landing/playhub-2.webp",
         },
         {
           title: "Game Highlights",
           description:
-            "Cinematic highlight compilations with professional editing, music, and visual effects.",
+            "Professional game highlight compilation with cinematic editing and music for maximum impact.",
           image: "/landing/player-dashboard.webp",
         },
       ],
     },
     {
       title: "Connected Athlete",
-      subtitle: "AI Performance Analytics",
       description:
-        "An AI-powered performance and health analytics platform that uses computer vision to analyze movements, identify injury risks, and generate actionable performance reports.",
-      icon: <Smartphone className="w-5 h-5" />,
-      color: customGradients[2],
+        "Connected Athlete is an AI-powered performance and health analytics platform that uses computer vision to analyze athlete movements, compare them to elite professionals, and generate actionable performance reports. It also identifies potential injury risks and automatically shares data with on-site physical therapists and medical partners for proactive care.",
+      icon: <Smartphone className="w-6 h-6" />,
+      color: customGradients[4],
       points: [
         {
           title: "AI Movement Analysis",
           description:
-            "Computer vision breaks down form and technique using video data compared against professional benchmarks.",
+            "Breaks down form and technique using video data and pro benchmarks. Advanced computer vision technology analyzes every movement for optimal performance.",
           image: "/landing/connected-athlete.webp",
         },
         {
           title: "Injury Risk Detection",
           description:
-            "Proactively identifies potential injury risks through movement pattern analysis.",
+            "Spots inefficiencies and flags physical issues before they become injuries. Proactive identification of potential problems through movement pattern analysis.",
           image: "/landing/connected-athlete-dashboard.webp",
         },
         {
-          title: "Integrated Recovery System",
+          title: "Integrated Recovery Loop",
           description:
-            "Syncs with therapists and health systems to deliver personalized recovery plans.",
+            "Syncs with physical therapists and health systems to deliver personalized improvement plans. Seamless data sharing for comprehensive athlete care.",
           image: "/landing/connected-athlete-profile.webp",
         },
       ],
     },
   ];
 
-  const getCurrentImage = () => {
-    if (hoveredPoint !== null) {
-      return technologyItems[activeTab].points[hoveredPoint].image;
-    }
-    return technologyItems[activeTab].points[0].image;
-  };
+  const getCurrentImage = () =>
+    hoveredPoint !== null
+      ? technologyItems[activeTab].points[hoveredPoint].image
+      : technologyItems[activeTab].points[0].image;
 
-  const getCurrentPointInfo = () => {
-    if (hoveredPoint !== null) {
-      return technologyItems[activeTab].points[hoveredPoint];
-    }
-    return technologyItems[activeTab].points[0];
-  };
+  const getCurrentPointInfo = () =>
+    hoveredPoint !== null
+      ? technologyItems[activeTab].points[hoveredPoint]
+      : technologyItems[activeTab].points[0];
 
   return (
     <section
       id="sports-technology"
-      className="relative bg-black py-20 md:py-24 text-foreground overflow-hidden"
-      ref={sectionRef}
+      className={cn("py-16 md:py-20 bg-black text-white", isLightTheme && "text-gray-900")}
+      ref={ref}
     >
-      <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-black/[0.02]" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-
-      <div className="relative max-w-7xl mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center mb-16 md:mb-20"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 mb-6">
-            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 animate-pulse" />
-            <span className="text-sm font-medium text-muted-foreground">
-              Sports Technology Platform
-            </span>
-          </div>
-
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-600 to-teal-600">
-              Leading Global Youth
-            </span>
-            <br />
-            <span className="text-foreground">Sports Technology</span>
-          </h1>
-
-          <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Cutting-edge digital platforms designed to enhance the youth sports
-            experience, provide unprecedented exposure opportunities, and
-            develop the next generation of athletes.
-          </p>
-        </motion.div>
-
+      <div className="container md:px-6 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-3 md:gap-4 mb-12 md:mb-16"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#b55fc2] to-[#0037c0]">
+              Leading Global Youth Sports Technology
+            </span>
+          </h2>
+          <p
+            className={cn(
+              "text-lg md:text-xl max-w-3xl mx-auto",
+              isLightTheme ? "text-gray-600" : "text-gray-300"
+            )}
+          >
+            Cutting-edge digital platforms enhancing the youth sports experience, driving exposure and athlete development.
+          </p>
+        </motion.div>
+
+        {/* Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="flex flex-wrap justify-center gap-4 mb-10"
         >
           {technologyItems.map((item, index) => (
             <button
@@ -245,191 +226,152 @@ export default function About() {
                 setHoveredPoint(null);
               }}
               className={cn(
-                "group flex items-center gap-3 px-6 md:px-8 py-3 md:py-4 rounded-2xl font-semibold transition-all duration-300 border-2",
-                "focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-background",
-                "active:scale-95 hover:scale-105",
+                "flex items-center gap-3 px-6 py-3 rounded-xl font-semibold transition-all duration-500 border-2 focus:outline-none focus:ring-0 active:scale-95",
                 activeTab === index
-                  ? `bg-gradient-to-r ${item.color} text-white border-transparent shadow-lg shadow-purple-500/25`
-                  : "bg-card/50 backdrop-blur-sm text-foreground border-border hover:border-purple-500/30 hover:shadow-md hover:bg-card/80"
+                  ? `bg-gradient-to-r ${item.color} text-white border-transparent shadow-lg`
+                  : isLightTheme
+                  ? "bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:shadow-md"
+                  : "bg-gray-900/50 text-gray-300 border-gray-700 hover:border-gray-600 hover:bg-gray-800/50"
               )}
             >
-              <div
+              <span
                 className={cn(
-                  "transition-all duration-300 group-hover:scale-110",
-                  activeTab === index ? "text-white" : "text-muted-foreground"
+                  "transition-colors duration-300",
+                  activeTab === index
+                    ? "text-white"
+                    : isLightTheme
+                    ? "text-gray-600"
+                    : "text-gray-400"
                 )}
               >
                 {item.icon}
-              </div>
-              <div className="text-left">
-                <div className="text-sm md:text-base font-semibold">
-                  {item.title}
-                </div>
-                <div
-                  className={cn(
-                    "text-xs opacity-75",
-                    activeTab === index
-                      ? "text-white/90"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {item.subtitle}
-                </div>
-              </div>
+              </span>
+              <span className="text-sm md:text-base">{item.title}</span>
             </button>
           ))}
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-start">
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+          {/* Left content */}
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <h3
                   className={cn(
-                    "p-3 rounded-xl bg-gradient-to-r",
-                    technologyItems[activeTab].color
+                    "text-2xl font-bold mb-2",
+                    isLightTheme ? "text-gray-900" : "text-white"
                   )}
                 >
-                  <div className="text-white">
-                    {technologyItems[activeTab].icon}
-                  </div>
-                </div>
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                    <a
-                      href={websiteUrls[activeTab]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-purple-600 transition-colors duration-200 inline-flex items-center gap-2 group"
-                    >
-                      {technologyItems[activeTab].title}
-                      <ExternalLink className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                    </a>
-                  </h2>
-                  <p className="text-lg text-muted-foreground font-medium">
-                    {technologyItems[activeTab].subtitle}
-                  </p>
-                </div>
-              </div>
+                  <a
+                    href={websiteUrls[activeTab]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    {technologyItems[activeTab].title}
+                  </a>
+                </h3>
+                <p
+                  className={cn(
+                    "text-base md:text-lg",
+                    isLightTheme ? "text-gray-600" : "text-gray-300"
+                  )}
+                >
+                  {technologyItems[activeTab].description}
+                </p>
+              </motion.div>
 
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                {technologyItems[activeTab].description}
-              </p>
-            </motion.div>
-
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-foreground mb-6">
-                Key Features
-              </h3>
-              {technologyItems[activeTab].points.map((point, index) => (
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className={cn(
-                    "group relative p-6 rounded-2xl cursor-pointer transition-all duration-300 border-2",
-                    "hover:scale-[1.02] hover:shadow-lg",
-                    hoveredPoint === index
-                      ? "bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/30 shadow-lg"
-                      : "bg-card/50 backdrop-blur-sm border-border hover:border-purple-500/20 hover:bg-card/80"
-                  )}
-                  onMouseEnter={() => setHoveredPoint(index)}
-                  onMouseLeave={() => setHoveredPoint(null)}
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.35 }}
+                  className="space-y-3"
                 >
-                  <div className="flex items-start gap-4">
-                    <div
+                  {technologyItems[activeTab].points.map((point, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -15 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.35, delay: index * 0.08 }}
                       className={cn(
-                        "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300",
-                        hoveredPoint === index
-                          ? `bg-gradient-to-r ${technologyItems[activeTab].color} text-white`
-                          : "bg-muted text-muted-foreground"
+                        "p-4 rounded-xl cursor-pointer transition-all duration-400 border-2",
+                        isLightTheme
+                          ? "bg-gray-50 border-gray-200 hover:border-gray-300 hover:shadow-md"
+                          : "bg-gray-900/30 border-gray-800 hover:border-gray-700 hover:bg-gray-800/50"
                       )}
+                      onMouseEnter={() => setHoveredPoint(index)}
+                      onMouseLeave={() => setHoveredPoint(null)}
                     >
-                      {index + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-foreground mb-2 group-hover:text-purple-600 transition-colors duration-200">
-                        {point.title}
+                      <h4
+                        className={cn(
+                          "font-semibold mb-2",
+                          isLightTheme ? "text-gray-900" : "text-white"
+                        )}
+                      >
+                        <a
+                          href={websiteUrls[activeTab]}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {point.title}
+                        </a>
                       </h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
+                      <p
+                        className={cn(
+                          "text-sm",
+                          isLightTheme ? "text-gray-600" : "text-gray-300"
+                        )}
+                      >
                         {point.description}
                       </p>
-                    </div>
-                  </div>
-
-                  {/* {hoveredPoint === index && (
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                      className={cn(
-                        "absolute bottom-0 left-2 right-2 rounded-xl h-1  bg-gradient-to-r origin-left",
-                        technologyItems[activeTab].color
+                      {hoveredPoint === index && (
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: 0.5 }}
+                          className={cn(
+                            "h-1 mt-3 rounded-full bg-gradient-to-r",
+                            technologyItems[activeTab].color
+                          )}
+                        />
                       )}
-                    />
-                  )} */}
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
+              </AnimatePresence>
             </div>
-          </div>
 
-          <div className="relative h-full">
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="sticky top-8"
-            >
-              <div className="relative w-full h-[40rem] mt-3 rotate-1">
-                <motion.div
-                  key={`${activeTab}-${hoveredPoint}`}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-2 border-border/50 bg-card/20 backdrop-blur-sm"
-                >
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={getCurrentImage() || "/landing/banner.webp"}
-                      alt={getCurrentPointInfo().title}
-                      fill
-                      sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="object-cover transition-transform duration-500 hover:scale-105"
-                      priority={activeTab === 0}
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-6 left-6 right-6">
-                      <h4 className="text-white font-semibold text-lg mb-2">
-                        {getCurrentPointInfo().title}
-                      </h4>
-                      <p className="text-white/90 text-sm leading-relaxed">
-                        {getCurrentPointInfo().description}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <div
-                  className={cn(
-                    "absolute -top-4 -right-4 w-24 h-24 rounded-full bg-gradient-to-r opacity-20 blur-xl",
-                    technologyItems[activeTab].color
-                  )}
-                />
-                <div
-                  className={cn(
-                    "absolute -bottom-4 -left-4 w-32 h-32 rounded-full bg-gradient-to-r opacity-10 blur-2xl",
-                    technologyItems[activeTab].color
-                  )}
-                />
-              </div>
-            </motion.div>
+          {/* Right image */}
+          <div className="relative h-[560px] w-full flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${activeTab}-${hoveredPoint}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="w-full h-full rounded-xl overflow-hidden shadow-2xl border border-white/10"
+              >
+                <div className="relative h-full w-full">
+                  <Image
+                    src={getCurrentImage() || "/landing/banner.webp"}
+                    alt={getCurrentPointInfo().title}
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover"
+                    priority={activeTab === 0}
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>

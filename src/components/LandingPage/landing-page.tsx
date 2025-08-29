@@ -21,12 +21,12 @@ export function LandingPage() {
         <HeroContainer
           titleComponent={
             <div className=" backdrop-blur-sm py-0 md:py-6 md:px-4 md:pb-5 rounded-xl">
-              <h1 className="font-semibold text-white">
+              <h1 className=" text-white">
                 <span className="bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent pr-3 text-2xl md:text-4xl">
                   Never miss a game again!
                 </span>
                 <br />
-                <span className="text-4xl md:text-[4rem] font-bold mt-1 leading-none bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <span className="text-4xl md:text-[4rem] font-semibold mt-1 leading-none bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                   Live streamed youth sports
                 </span>
               </h1>
