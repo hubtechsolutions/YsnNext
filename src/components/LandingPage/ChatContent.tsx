@@ -18,8 +18,6 @@ type ChatMessage = {
 };
 
 export default function ChatContent() {
-  // Temporary feature flag to disable match chat publicly without deleting implementation
-  const MATCH_CHAT_ENABLED = false; // set true to re-enable
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [optimisticMessages, setOptimisticMessages] = useState<ChatMessage[]>(
     []
@@ -29,9 +27,8 @@ export default function ChatContent() {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const matchId = "1"; // demo match id
 
-  // Subscribe to match chat messages only if enabled
+  // Subscribe to match chat messages
   useEffect(() => {
-    if (!MATCH_CHAT_ENABLED) return; // short-circuit when disabled
     const q = messagesForMatch(matchId);
     const unsub = onSnapshot(q, async (snap) => {
       const msgs: ChatMessage[] = [];
@@ -52,6 +49,8 @@ export default function ChatContent() {
           createdAt: data.createdAt,
         });
       });
+      // Fetch missing display names
+      // Fetch missing display names using db (dynamic import to avoid circular refs in SSR)
       try {
         const missing = Array.from(new Set(newSenderIds));
         if (missing.length) {
@@ -76,6 +75,7 @@ export default function ChatContent() {
         /* ignore fetch names */
       }
       setMessages(msgs);
+      // Clear optimistic (server now authoritative)
       if (msgs.length) setOptimisticMessages([]);
       setTimeout(
         () => bottomRef.current?.scrollIntoView({ behavior: "smooth" }),
@@ -84,11 +84,10 @@ export default function ChatContent() {
     });
     return () => unsub();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchId, MATCH_CHAT_ENABLED]);
+  }, [matchId]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!MATCH_CHAT_ENABLED) return; // ignore submits when disabled
     const trimmed = input.trim();
     if (!trimmed) return;
     try {
@@ -111,11 +110,6 @@ export default function ChatContent() {
   return (
     <ChatAuthGate>
       <div className="flex flex-col h-full min-h-0">
-        {!MATCH_CHAT_ENABLED && (
-          <div className="text-center text-sm text-gray-400 py-4 border border-dashed border-gray-600 rounded-lg mb-4">
-            Live match chat is currently unavailable.
-          </div>
-        )}
         <div className="flex-1 min-h-0 overflow-y-auto space-y-4 mb-4 pr-2">
           {[...messages, ...optimisticMessages].map((message) => {
             const isMe = auth.currentUser?.uid === message.senderId;
@@ -164,21 +158,19 @@ export default function ChatContent() {
           })}
           <div ref={bottomRef} />
         </div>
-    <form onSubmit={handleSubmit} className="flex gap-3">
+        <form onSubmit={handleSubmit} className="flex gap-3 justify-center items-center ">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-      placeholder={MATCH_CHAT_ENABLED ? "Type Message" : "Chat disabled"}
+            placeholder="Type Message"
             className="flex-1 bg-gray-800/50 border-gray-600/50 text-white placeholder-gray-400 focus:border-purple-400 rounded-xl h-12"
-      disabled={!MATCH_CHAT_ENABLED}
           />
           <Button
             type="submit"
             size="sm"
-      className="bg-purple-600 hover:bg-purple-700 px-4 h-12 rounded-xl disabled:opacity-50"
-      disabled={!MATCH_CHAT_ENABLED}
+            className="bg-purple-600 hover:bg-purple-700 px-4 h-10 rounded-xl"
           >
-            <Send size={18} />
+            <Send size={18} color="white" />
           </Button>
         </form>
       </div>
