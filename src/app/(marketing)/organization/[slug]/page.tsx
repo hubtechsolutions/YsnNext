@@ -107,7 +107,7 @@ export default function OrganizationDetailsPage() {
     <div className="bg-black text-white min-h-screen">
       <div className="bg-black text-white py-12 mt-20 md:px-6 z-10">
         <div className="container m-auto flex flex-col items-center gap-10">
-          <div className="w-full max-w-7xl">
+          <div className="w-full container">
             <TopCard orgData={org} />
             
             <TeamManagement 
