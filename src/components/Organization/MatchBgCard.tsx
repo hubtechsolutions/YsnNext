@@ -17,9 +17,15 @@ type MatchBgItem = {
 
 export default function MatchBgCard({ item }: { item: MatchBgItem }) {
   return (
-  <div className="relative w-[325px] xs:w-[360px] md:w-[340px] lg:w-[450px] rounded-2xl font-sans text-white overflow-hidden pb-5 bg-center bg-cover bg-[url('/landing/card-bg.webp')]">
+    <div className="relative w-full max-w-[450px] mx-auto rounded-2xl font-sans text-white overflow-hidden pb-5 bg-center bg-cover bg-[url('/landing/card-bg.webp')]">
       <div className="absolute pointer-events-none">
-        <Image src="/landing/trophy.webp" alt="Trophy" width={200} height={150} className="w-[200px] h-[150px] object-cover z-1" />
+        <Image
+          src="/landing/trophy.webp"
+          alt="Trophy"
+          width={200}
+          height={150}
+          className="w-[200px] h-[150px] object-cover z-1"
+        />
       </div>
       {/* Date */}
       <div className="text-gray-300 text-center mb-1 pt-4 text-xs">
@@ -48,9 +54,10 @@ export default function MatchBgCard({ item }: { item: MatchBgItem }) {
         {/* Score */}
         <div
           className={`${
-            (Number(item.your_team_score) || Number(item.opponent_team_score)) > 100
-              ? 'max-md:text-[20px] max-lg:text-[20px] max-xl:text-[28px] max-2xl:text-[28px] text-[28px]'
-              : 'text-[28px] lg:text-[40px]'
+            (Number(item.your_team_score) || Number(item.opponent_team_score)) >
+            100
+              ? "max-md:text-[20px] max-lg:text-[20px] max-xl:text-[28px] max-2xl:text-[28px] text-[28px]"
+              : "text-[28px] lg:text-[40px]"
           } font-bold h-full text-start pb-8`}
         >
           {item.your_team_score ?? "-"} : {item.opponent_team_score ?? "-"}
@@ -58,7 +65,9 @@ export default function MatchBgCard({ item }: { item: MatchBgItem }) {
         {/* Right Team */}
         <div className="flex flex-col items-center h-full text-center justify-center">
           <Image
-            src={(item.opponent_team_logo ?? "/ysnlogo.webp") || "/ysnlogo.webp"}
+            src={
+              (item.opponent_team_logo ?? "/ysnlogo.webp") || "/ysnlogo.webp"
+            }
             alt={item.opponent_team_name || "Opponent"}
             width={71}
             height={71}
