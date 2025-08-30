@@ -7,17 +7,31 @@ import { CarouselItem } from "../ui/carousel"
 import MatchBgCard from "./MatchBgCard"
 
 type MatchScheduleItem = {
-  match_id: number
-  your_team_name: string
-  team_logo: string | null
-  opponent_team_name: string
-  opponent_team_logo: string | null
-  match_played_date: string
-}
+  match_id: number;
+  your_team_name: string;
+  team_logo: string | null;
+  opponent_team_name: string;
+  opponent_team_logo: string | null;
+  match_played_date: string;
+  your_team_score?: number | string | null;
+  opponent_team_score?: number | string | null;
+  win_or_lose?: 'Won' | 'Loss' | 'Tie' | string | null;
+};
 
 type MatchCardProps = {
   matchschedules: MatchScheduleItem[]
 }
+
+// Derive result if API didn't send or if you want to re-check
+function computeResult(a?: number | string | null, b?: number | string | null): 'Won' | 'Loss' | 'Tie' {
+  const na = Number(a);
+  const nb = Number(b);
+  if (isNaN(na) || isNaN(nb)) return 'Tie';
+  if (na === nb) return 'Tie';
+  return na > nb ? 'Won' : 'Loss';
+}
+
+const safeLogo = (logo: string | null) => (logo && logo.trim() !== '' ? logo : '/ysnlogo.webp');
 
 export default function MatchCard({ matchschedules }: MatchCardProps) {
   return (
@@ -31,20 +45,26 @@ export default function MatchCard({ matchschedules }: MatchCardProps) {
       <div className="border-t border-[#1C1A26] mt-4 mb-10" />
       {matchschedules?.length ? (
         <ImageSlider>
-          {matchschedules.map((m) => (
-            <CarouselItem key={m.match_id} className="basis-full sm:basis-1/2 xl:basis-1/3">
-              <MatchBgCard
-                item={{
-                  id: m.match_id,
-                  match_played_date: m.match_played_date,
-                  your_team_name: m.your_team_name,
-                  team_logo: m.team_logo,
-                  opponent_team_name: m.opponent_team_name,
-                  opponent_team_logo: m.opponent_team_logo,
-                }}
-              />
-            </CarouselItem>
-          ))}
+          {matchschedules.map((m) => {
+            const winOrLose = (m.win_or_lose as 'Won' | 'Loss' | 'Tie' | undefined) || computeResult(m.your_team_score, m.opponent_team_score);
+            return (
+              <CarouselItem key={m.match_id} className="basis-full sm:basis-1/2 xl:basis-1/3">
+                <MatchBgCard
+                  item={{
+                    id: m.match_id,
+                    match_played_date: m.match_played_date,
+                    your_team_name: m.your_team_name,
+                    team_logo: safeLogo(m.team_logo),
+                    opponent_team_name: m.opponent_team_name,
+                    opponent_team_logo: safeLogo(m.opponent_team_logo),
+                    your_team_score: m.your_team_score ?? '-',
+                    opponent_team_score: m.opponent_team_score ?? '-',
+                    win_or_lose: winOrLose,
+                  }}
+                />
+              </CarouselItem>
+            );
+          })}
         </ImageSlider>
       ) : (
         <div className="flex justify-center">
