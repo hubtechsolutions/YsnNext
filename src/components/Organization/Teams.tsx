@@ -7,6 +7,7 @@ import  ImageSlider  from "@/components/Organization/ImageSlider"
 import { CarouselItem } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 import { PlayerCard } from "@/components/Common/PlayerCard"
+import Image from "next/image"
 
 type TeamItem = {
   team_id: number
@@ -25,7 +26,7 @@ export default function Teams({ teams, className }: TeamsProps) {
     <div className={cn("container mx-auto md:p-6 text-white", className)}>
       <div className="flex justify-between items-center gap-3 mt-20">
         <div className="flex items-center gap-3">
-          <Star className="w-[30px] h-[30px] md:w-[35px] md:h-[35px] text-white" />
+          <Image src="/landing/star.webp" alt="Star" width={32} height={32} />
           <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-white">Teams</h1>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 type MatchBgItem = {
   id: number | string;
@@ -14,46 +15,30 @@ type MatchBgItem = {
   win_or_lose?: "Won" | "Loss" | "Tie" | string;
 };
 
-export default function MatchBgCard({
-  item,
-  isNextLast = false,
-}: {
-  item: MatchBgItem;
-  isNextLast?: boolean;
-}) {
+export default function MatchBgCard({ item }: { item: MatchBgItem }) {
   return (
-    <div
-      className={`relative w-[325px] xs:w-[360px] md:w-[340px] lg:w-[450px] rounded-2xl font-sans text-white overflow-hidden pb-5 bg-center bg-cover ${
-        isNextLast
-          ? "bg-[url('/assets/card-bg.webp')] h-[200px]"
-          : "bg-[url('/landing/card-bg.webp')]"
-      }`}
-    >
+    <div className="relative w-full max-w-[450px] mx-auto rounded-2xl font-sans text-white overflow-hidden pb-5 bg-center bg-cover bg-[url('/landing/card-bg.webp')]">
       <div className="absolute pointer-events-none">
-        <img
+        <Image
           src="/landing/trophy.webp"
-          alt="trophy-icon"
-          className={`w-[200px] object-cover z-1 ${
-            isNextLast ? "h-[200px]" : "h-[150px]"
-          }`}
+          alt="Trophy"
+          width={200}
+          height={150}
+          className="w-[200px] h-[150px] object-cover z-1"
         />
       </div>
       {/* Date */}
-      <div
-        className={`text-gray-300 text-center ${
-          !isNextLast
-            ? "mb-1 pt-4 text-xs"
-            : "text-[16px] absolute top-[20px] left-1/2 -translate-x-1/2"
-        }`}
-      >
+      <div className="text-gray-300 text-center mb-1 pt-4 text-xs">
         {item.match_played_date}
       </div>
       {/* Match Info */}
       <div className="flex items-center justify-between h-full z-5">
         <div className="flex flex-col items-center h-full text-center justify-center">
-          <img
-            src={item.team_logo ?? "/ysnlogo.webp"}
-            alt="Team 1"
+          <Image
+            src={(item.team_logo ?? "/ysnlogo.webp") || "/ysnlogo.webp"}
+            alt={item.your_team_name || "Team"}
+            width={71}
+            height={71}
             className="size-[60px] lg:size-[71px] pb-2 object-contain"
           />
           <div className="relative group w-[110px] lg:w-[130px]">
@@ -68,22 +53,24 @@ export default function MatchBgCard({
 
         {/* Score */}
         <div
-          className={`font-bold h-full ${
-            isNextLast ? "flex items-center justify-center" : "text-start pb-8"
-          } ${
+          className={`${
             (Number(item.your_team_score) || Number(item.opponent_team_score)) >
             100
-              ? "max-md:text-[20px] max-lg:text-[20px] max-xl:text-[28px] max-2xl:text-[28px] text-[28px]"
-              : "text-[28px] lg:text-[40px]"
-          }`}
+              ? "text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px]"
+              : "text-[24px] lg:text-[32px]"
+          } font-bold h-full text-start pb-8`}
         >
           {item.your_team_score ?? "-"} : {item.opponent_team_score ?? "-"}
         </div>
         {/* Right Team */}
         <div className="flex flex-col items-center h-full text-center justify-center">
-          <img
-            src={item.opponent_team_logo ?? "/ysnlogo.webp"}
-            alt="Opponent"
+          <Image
+            src={
+              (item.opponent_team_logo ?? "/ysnlogo.webp") || "/ysnlogo.webp"
+            }
+            alt={item.opponent_team_name || "Opponent"}
+            width={71}
+            height={71}
             className="size-[60px] lg:size-[71px] pb-2 object-contain"
           />
           <div className="relative group w-[110px] lg:w-[130px]">

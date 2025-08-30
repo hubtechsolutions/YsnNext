@@ -180,7 +180,7 @@ export default function TeamDetailsPage() {
   return (
     <div className="bg-black text-white min-h-screen">
      
-      <div className="bg-black text-white mt-20 py-12 md:px-6 z-10">
+      <div className="bg-black text-white mt-20 py-12  z-10">
         <div className="container m-auto flex flex-col items-center gap-10">
           {isLoading ? (
             <div className="flex mt-[120px] mb-[200px]">
@@ -191,7 +191,7 @@ export default function TeamDetailsPage() {
               <h2 className="text-center">{error ?? "Team not found"}</h2>
             </div>
           ) : (
-            <div className="w-full max-w-7xl">
+            <div className="w-full ">
               <TopCard orgData={mappedTopCardData} />
 
               <div className="mt-6">
@@ -202,7 +202,7 @@ export default function TeamDetailsPage() {
                 <Players players={players} />
               </div>
 
-              <div className="mt-6">
+              <div className="container">
                 <Streaming />
               </div>
 

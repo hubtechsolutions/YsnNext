@@ -1,6 +1,6 @@
 import { useAuthStore } from './auth-store'
 
-const BASE_URL = 'https://beta.ysn.tv/api'
+export const BASE_URL = 'https://beta.ysn.tv/api'
 
 // Types for Opponent Teams
 export interface OpponentTeam {
