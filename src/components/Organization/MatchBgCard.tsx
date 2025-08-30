@@ -56,8 +56,8 @@ export default function MatchBgCard({ item }: { item: MatchBgItem }) {
           className={`${
             (Number(item.your_team_score) || Number(item.opponent_team_score)) >
             100
-              ? "max-md:text-[20px] max-lg:text-[20px] max-xl:text-[28px] max-2xl:text-[28px] text-[28px]"
-              : "text-[28px] lg:text-[40px]"
+              ? "text-[18px] md:text-[20px] lg:text-[22px] xl:text-[24px]"
+              : "text-[24px] lg:text-[32px]"
           } font-bold h-full text-start pb-8`}
         >
           {item.your_team_score ?? "-"} : {item.opponent_team_score ?? "-"}

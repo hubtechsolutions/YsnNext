@@ -371,7 +371,7 @@ export default function Navbar() {
     <div className="flex items-center justify-between">
       {/* Logo Section */}
       <div className="flex items-center z-50">
-        <Link href="https://beta.ysn.tv/">
+        <Link href="/">
           <Image
             src="/ysnlogo.webp"
             alt="YSN Logo"
@@ -416,7 +416,7 @@ export default function Navbar() {
     <div className="flex items-center justify-between">
       {/* Mobile Logo */}
       <div className="flex items-center z-50">
-        <Link href="https://beta.ysn.tv/">
+        <Link href="/">
           <Image
             src="/ysnlogo.webp"
             alt="YSN Logo"
