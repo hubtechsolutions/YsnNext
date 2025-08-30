@@ -8,7 +8,6 @@ import { NotificationIcon, MessageIcon } from "@/components/superAdmin/navigatio
 // Removed ChatSearchButton from header
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuthStore } from "@/lib/auth-store"
-import { ThemeToggle } from "@/components/theme-toggle"
 
 export function SiteHeader() {
   const isMobile = useIsMobile()
@@ -37,7 +36,6 @@ export function SiteHeader() {
         <div className="flex items-center gap-4">
           <NotificationIcon />
           <MessageIcon />
-          <ThemeToggle />
           {isCoach ? <CoachProfilePopover /> : <NavUser user={userData} />}
         </div>
       </div>

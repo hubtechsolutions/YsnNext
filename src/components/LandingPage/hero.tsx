@@ -36,7 +36,7 @@ export const HeroContainer = ({
 
   return (
     <div
-      className="h-[60rem] w-full max-w-6xl mx-auto md:h-[70rem] flex items-center justify-center relative m-2 z-15 md:m-10 lg:z-[15]"
+      className="h-[60rem] w-full max-w-5xl mx-auto md:h-[70rem] flex items-center justify-center relative m-2 z-15 md:m-10 lg:z-[15]"
       ref={containerRef}
     >
       <div

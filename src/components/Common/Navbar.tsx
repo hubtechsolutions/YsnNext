@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,10 +12,15 @@ import {
   Newspaper,
   LogOut,
   MessageCircle,
+  User,
+  Users2,
+  UserPlus,
+  KeyRound,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { NavBar } from "./AnimatedNavbar";
-import { useAuthStore } from "@/lib/auth-store";
+import DesktopSearch from "./DesktopSearch";
+import { useAuthStore, USER_TYPE } from "@/lib/auth-store";
 import { useChatStore } from "@/lib/chat-store";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -37,9 +42,9 @@ import {
 import { Button } from "@/components/ui/button";
 import ChatPanel from "@/components/chat/ChatPanel";
 
+
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -53,14 +58,11 @@ export default function Navbar() {
     router.push("/");
   };
 
-  const handleSearchClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsSearchOpen(false);
-      setIsClosing(false);
-      setSearchQuery("");
-    }, 300);
-  };
+  const handleSearchClose = useCallback(() => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  }, []);
+  const openSearch = useCallback(() => setIsSearchOpen(true), []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -81,133 +83,23 @@ export default function Navbar() {
     { name: "Advertising", url: "/advertise", icon: Newspaper },
   ];
 
-  const DesktopSearch = () => {
-    const searchRef = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (
-          searchRef.current &&
-          !searchRef.current.contains(event.target as Node)
-        ) {
-          handleSearchClose();
-        }
-      };
-
-      if (isSearchOpen) {
-        document.addEventListener("mousedown", handleClickOutside);
-      }
-
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    });
-
-    return (
-      <div className="relative w-10 h-10 flex items-center" ref={searchRef}>
-        <motion.button
-          className="cursor-pointer absolute left-3 z-20"
-          initial={false}
-          animate={
-            isSearchOpen && !isClosing
-              ? { opacity: 0, scale: 0.75 }
-              : { opacity: 1, scale: 1 }
-          }
-          transition={{
-            duration: 0.3,
-            ease: "easeInOut",
-            delay: !isSearchOpen ? 0.2 : 0,
-          }}
-          style={{ pointerEvents: isSearchOpen ? "none" : "auto" }}
-          onClick={() => setIsSearchOpen(true)}
-        >
-          <Search className="w-5 h-5 text-gray-500" />
-        </motion.button>
-
-        <motion.div
-          className="absolute right-0 top-0 z-10 overflow-hidden"
-          initial={{ width: 0, opacity: 0 }}
-          animate={
-            isSearchOpen && !isClosing
-              ? { width: 200, opacity: 1 }
-              : { width: 0, opacity: 0 }
-          }
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-        >
-          <AnimatePresence mode="wait">
-            {isSearchOpen && (
-              <motion.div
-                className="relative flex items-center w-50"
-                initial={{ scale: 0.9, opacity: 0, x: 20 }}
-                animate={
-                  !isClosing
-                    ? { scale: 1, opacity: 1, x: 0 }
-                    : { scale: 0.9, opacity: 0, x: 20 }
-                }
-                exit={{ scale: 0.9, opacity: 0, x: 20 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="bg-black text-white text-sm border border-purple-500 focus:border-purple-500 outline-purple-500 ring-none rounded-full pl-4 pr-4 py-1.5 shadow-md focus:outline-none w-full"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  autoFocus
-                />
-                <motion.button
-                  className="absolute right-3 z-10"
-                  initial={{ opacity: 0, scale: 0.5, rotate: 180 }}
-                  animate={
-                    !isClosing
-                      ? { opacity: 1, scale: 1, rotate: 0 }
-                      : { opacity: 0, scale: 0.5, rotate: 180 }
-                  }
-                  exit={{ opacity: 0, scale: 0.5, rotate: 180 }}
-                  transition={{
-                    duration: 0.3,
-                    ease: "easeInOut",
-                    delay: !isClosing && isSearchOpen ? 0.1 : 0,
-                  }}
-                  onClick={handleSearchClose}
-                >
-                  <X className="w-5 h-5 text-gray-500 cursor-pointer" />
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Search Results Dropdown */}
-        <AnimatePresence>
-          {isSearchOpen && searchQuery && (
-            <motion.ul
-              className="bg-gray-900 mt-1 rounded-lg shadow-lg overflow-y-scroll scrollbar-thin scrollbar-thumb-custom scrollbar z-10 absolute w-40 right-0 top-12"
-              initial={{ opacity: 0, scale: 0.95, y: -8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -8 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <div className="flex items-center justify-center h-[100px] rounded-2xl">
-                <p className="text-sm text-white opacity-50">
-                  No Results Found
-                </p>
-              </div>
-            </motion.ul>
-          )}
-        </AnimatePresence>
-      </div>
-    );
-  };
+  // (DesktopSearch now hoisted above)
 
   // Message Icon Component
   const MessageIcon = () => {
     const unreadCount = 0; // You can implement unread count logic here
-    
+
     return (
-      <Dialog open={isOpen} onOpenChange={(open) => (open ? openChat() : closeChat())}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openChat() : closeChat())}
+      >
         <DialogTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative cursor-pointer text-white hover:text-purple-400 h-10 w-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative cursor-pointer text-white hover:text-purple-400 h-10 w-10"
+          >
             <MessageCircle className="h-5 w-5" />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-purple-500 text-white text-xs flex items-center justify-center">
@@ -243,34 +135,80 @@ export default function Navbar() {
         Log In
       </Link>
       <div>|</div>
-      <Link href="/login" className="text-white">
+      <Link href="/register" className="text-white">
         Sign Up
       </Link>
     </div>
   );
 
-  const DesktopUserMenu = () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="rounded-full border border-purple-500/40 p-1 focus:outline-none">
-          <Avatar className="size-8">
-            <AvatarFallback>
-              {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[10rem]">
-        <DropdownMenuLabel className="text-xs opacity-70">
-          {user?.name || user?.email}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-          <LogOut className="w-4 h-4" /> Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+  const DesktopUserMenu = () => {
+    const userType = user?.user_type;
+    const isOrg = userType === USER_TYPE.ORGANIZATION;
+    const isPlayer = userType === USER_TYPE.PLAYER;
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="rounded-full border border-purple-500/40 p-1 focus:outline-none">
+            <Avatar className="size-8">
+              <AvatarFallback>
+                {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[12rem]">
+          <DropdownMenuLabel className="text-xs opacity-70">
+            {user?.name || user?.email}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {/* Common */}
+          <DropdownMenuItem
+            onClick={() =>
+              router.push(
+                isPlayer
+                  ? "/player-profile"
+                  : isOrg
+                  ? "/(marketing)/organization"
+                  : "/dashboard"
+              )
+            }
+          >
+            <User className="w-4 h-4 mr-2" /> My Profile
+          </DropdownMenuItem>
+          {isOrg && (
+            <>
+              <DropdownMenuItem onClick={() => router.push("/admins")}>
+                <Users className="w-4 h-4 mr-2" /> Admins
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/coaches")}>
+                <Users2 className="w-4 h-4 mr-2" /> Coaches
+              </DropdownMenuItem>
+            </>
+          )}
+          {isPlayer && (
+            <>
+              <DropdownMenuItem onClick={() => router.push("/parents")}>
+                <UserPlus className="w-4 h-4 mr-2" /> Parents
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/family")}>
+                <Users className="w-4 h-4 mr-2" /> Family
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/friends")}>
+                <Users2 className="w-4 h-4 mr-2" /> Friends
+              </DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuItem onClick={() => router.push("/change-password")}>
+            <KeyRound className="w-4 h-4 mr-2" /> Change Password
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+            <LogOut className="w-4 h-4" /> Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
 
   // Mobile Search Component
   const MobileSearch = () => (
@@ -309,13 +247,13 @@ export default function Navbar() {
   const MobileAuth = () => (
     <div className="mt-10 flex flex-col gap-4">
       <Link
-        href="https://beta.ysn.tv/login"
+        href="/login"
         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-bold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 border border-purple-500 text-white hover:border-purple-500/50 transition-all duration-300"
       >
         Log In
       </Link>
       <Link
-        href="https://beta.ysn.tv/register"
+        href="/register"
         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm ring-offset-background focus-visible:outline-none font-bold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300"
       >
         Sign Up
@@ -325,9 +263,12 @@ export default function Navbar() {
 
   const MobileMessage = () => (
     <div className="mt-6">
-      <Dialog open={isOpen} onOpenChange={(open) => (open ? openChat() : closeChat())}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openChat() : closeChat())}
+      >
         <DialogTrigger asChild>
-          <button 
+          <button
             className="flex items-center gap-3 rounded-full border border-purple-500/40 p-3 focus:outline-none w-full hover:bg-purple-700/20 transition"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -350,31 +291,80 @@ export default function Navbar() {
     </div>
   );
 
-  const MobileUserMenu = () => (
-    <div className="mt-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-3 rounded-full border border-purple-500/40 p-1 focus:outline-none">
-            <Avatar className="size-9">
-              <AvatarFallback>
-                {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-white text-sm">Account</span>
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-[12rem]">
-          <DropdownMenuLabel className="text-xs opacity-70">
-            {user?.name || user?.email}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-            <LogOut className="w-4 h-4" /> Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
+  const MobileUserMenu = () => {
+    const userType = user?.user_type;
+    const isOrg = userType === USER_TYPE.ORGANIZATION;
+    const isPlayer = userType === USER_TYPE.PLAYER;
+    const push = (p: string) => {
+      router.push(p);
+      setIsMobileMenuOpen(false);
+    };
+    return (
+      <div className="mt-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-3 rounded-full border border-purple-500/40 p-1 focus:outline-none">
+              <Avatar className="size-9">
+                <AvatarFallback>
+                  {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-white text-sm">Account</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[14rem]">
+            <DropdownMenuLabel className="text-xs opacity-70">
+              {user?.name || user?.email}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() =>
+                push(
+                  isPlayer
+                    ? "/player-profile"
+                    : isOrg
+                    ? "/(marketing)/organization"
+                    : "/dashboard"
+                )
+              }
+            >
+              <User className="w-4 h-4 mr-2" /> My Profile
+            </DropdownMenuItem>
+            {isOrg && (
+              <>
+                <DropdownMenuItem onClick={() => push("/admins")}>
+                  <Users className="w-4 h-4 mr-2" /> Admins
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => push("/coaches")}>
+                  <Users2 className="w-4 h-4 mr-2" /> Coaches
+                </DropdownMenuItem>
+              </>
+            )}
+            {isPlayer && (
+              <>
+                <DropdownMenuItem onClick={() => push("/parents")}>
+                  <UserPlus className="w-4 h-4 mr-2" /> Parents
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => push("/family")}>
+                  <Users className="w-4 h-4 mr-2" /> Family
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => push("/friends")}>
+                  <Users2 className="w-4 h-4 mr-2" /> Friends
+                </DropdownMenuItem>
+              </>
+            )}
+            <DropdownMenuItem onClick={() => push("/change-password")}>
+              <KeyRound className="w-4 h-4 mr-2" /> Change Password
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+              <LogOut className="w-4 h-4" /> Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  };
 
   // Desktop Navbar Component
   const DesktopNavbar = () => (
@@ -408,7 +398,13 @@ export default function Navbar() {
 
       {/* Desktop Search and Auth */}
       <div className="flex items-center gap-4 z-50">
-        <DesktopSearch />
+        <DesktopSearch
+          isOpen={isSearchOpen}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          open={openSearch}
+          close={handleSearchClose}
+        />
         {isAuthenticated && <MessageIcon />}
         {isAuthenticated ? <DesktopUserMenu /> : <DesktopAuth />}
       </div>
@@ -553,17 +549,6 @@ export default function Navbar() {
   return (
     <header className="relative w-full bg-gradient-to-b from-black to-transparent text-white py-4 px-6">
       {isMobile ? <MobileNavbar /> : <DesktopNavbar />}
-
-      {/* Purple glow effect */}
-      <div className="absolute inset-x-0 top-0 z-20 h-full w-full pointer-events-none">
-        <Image
-          src="/bg.svg"
-          alt="Background Glow"
-          width={1920}
-          height={400}
-          className="w-full h-full object-cover pointer-events-none select-none"
-        />
-      </div>
     </header>
   );
 }

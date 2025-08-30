@@ -70,7 +70,7 @@ export default function ChatSection({
               />
             </div>
           )}
-          {/* Content area */}
+          {/* Content area (auth blur handled by parent container overlay) */}
           <div className="flex-1 min-h-0">
             {!isChat ? renderTabContent() : <ChatContent />}
           </div>
