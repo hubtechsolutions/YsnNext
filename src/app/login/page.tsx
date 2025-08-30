@@ -54,17 +54,9 @@ export default function LoginPage() {
     const success = await login(email, password)
     
     if (success) {
-      // Get the current user from the store
       const currentUser = useAuthStore.getState().user
-      
-      // Check if user is authorized (super admin or coach)
-      if (currentUser && (currentUser.user_type === 9 || currentUser.user_type === 3)) {
-        // User is authorized, AuthProvider will handle the redirect
-        console.log('LoginPage: User authorized, AuthProvider will redirect')
-      } else {
-        // User is not authorized, redirect back to landing page
-        console.log('LoginPage: User not authorized, redirecting to landing page')
-        router.push('/')
+      if (currentUser) {
+        console.log('LoginPage: Login success, user_type:', currentUser.user_type)
       }
     }
   }

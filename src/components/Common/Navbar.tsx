@@ -12,10 +12,14 @@ import {
   Newspaper,
   LogOut,
   MessageCircle,
+  User,
+  Users2,
+  UserPlus,
+  KeyRound,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { NavBar } from "./AnimatedNavbar";
-import { useAuthStore } from "@/lib/auth-store";
+import { useAuthStore, USER_TYPE } from "@/lib/auth-store";
 import { useChatStore } from "@/lib/chat-store";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -243,34 +247,70 @@ export default function Navbar() {
         Log In
       </Link>
       <div>|</div>
-      <Link href="/login" className="text-white">
+      <Link href="/register" className="text-white">
         Sign Up
       </Link>
     </div>
   );
 
-  const DesktopUserMenu = () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="rounded-full border border-purple-500/40 p-1 focus:outline-none">
-          <Avatar className="size-8">
-            <AvatarFallback>
-              {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[10rem]">
-        <DropdownMenuLabel className="text-xs opacity-70">
-          {user?.name || user?.email}
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-          <LogOut className="w-4 h-4" /> Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+  const DesktopUserMenu = () => {
+    const userType = user?.user_type;
+    const isOrg = userType === USER_TYPE.ORGANIZATION;
+    const isPlayer = userType === USER_TYPE.PLAYER;
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="rounded-full border border-purple-500/40 p-1 focus:outline-none">
+            <Avatar className="size-8">
+              <AvatarFallback>
+                {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[12rem]">
+          <DropdownMenuLabel className="text-xs opacity-70">
+            {user?.name || user?.email}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {/* Common */}
+          <DropdownMenuItem onClick={() => router.push(isPlayer ? '/player-profile' : isOrg ? '/(marketing)/organization' : '/dashboard')}>
+            <User className="w-4 h-4 mr-2" /> My Profile
+          </DropdownMenuItem>
+          {isOrg && (
+            <>
+              <DropdownMenuItem onClick={() => router.push('/admins')}>
+                <Users className="w-4 h-4 mr-2" /> Admins
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/coaches')}>
+                <Users2 className="w-4 h-4 mr-2" /> Coaches
+              </DropdownMenuItem>
+            </>
+          )}
+          {isPlayer && (
+            <>
+              <DropdownMenuItem onClick={() => router.push('/parents')}>
+                <UserPlus className="w-4 h-4 mr-2" /> Parents
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/family')}>
+                <Users className="w-4 h-4 mr-2" /> Family
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/friends')}>
+                <Users2 className="w-4 h-4 mr-2" /> Friends
+              </DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuItem onClick={() => router.push('/change-password')}>
+            <KeyRound className="w-4 h-4 mr-2" /> Change Password
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+            <LogOut className="w-4 h-4" /> Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
 
   // Mobile Search Component
   const MobileSearch = () => (
@@ -309,13 +349,13 @@ export default function Navbar() {
   const MobileAuth = () => (
     <div className="mt-10 flex flex-col gap-4">
       <Link
-        href="https://beta.ysn.tv/login"
+        href="/login"
         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-bold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 border border-purple-500 text-white hover:border-purple-500/50 transition-all duration-300"
       >
         Log In
       </Link>
       <Link
-        href="https://beta.ysn.tv/register"
+        href="/register"
         className="inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm ring-offset-background focus-visible:outline-none font-bold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300"
       >
         Sign Up
@@ -350,31 +390,67 @@ export default function Navbar() {
     </div>
   );
 
-  const MobileUserMenu = () => (
-    <div className="mt-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-3 rounded-full border border-purple-500/40 p-1 focus:outline-none">
-            <Avatar className="size-9">
-              <AvatarFallback>
-                {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-white text-sm">Account</span>
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="min-w-[12rem]">
-          <DropdownMenuLabel className="text-xs opacity-70">
-            {user?.name || user?.email}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-            <LogOut className="w-4 h-4" /> Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
+  const MobileUserMenu = () => {
+    const userType = user?.user_type;
+    const isOrg = userType === USER_TYPE.ORGANIZATION;
+    const isPlayer = userType === USER_TYPE.PLAYER;
+    const push = (p: string) => { router.push(p); setIsMobileMenuOpen(false); };
+    return (
+      <div className="mt-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-3 rounded-full border border-purple-500/40 p-1 focus:outline-none">
+              <Avatar className="size-9">
+                <AvatarFallback>
+                  {(user?.name || user?.email || "U").slice(0, 1).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-white text-sm">Account</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[14rem]">
+            <DropdownMenuLabel className="text-xs opacity-70">
+              {user?.name || user?.email}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => push(isPlayer ? '/player-profile' : isOrg ? '/(marketing)/organization' : '/dashboard')}>
+              <User className="w-4 h-4 mr-2" /> My Profile
+            </DropdownMenuItem>
+            {isOrg && (
+              <>
+                <DropdownMenuItem onClick={() => push('/admins')}>
+                  <Users className="w-4 h-4 mr-2" /> Admins
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => push('/coaches')}>
+                  <Users2 className="w-4 h-4 mr-2" /> Coaches
+                </DropdownMenuItem>
+              </>
+            )}
+            {isPlayer && (
+              <>
+                <DropdownMenuItem onClick={() => push('/parents')}>
+                  <UserPlus className="w-4 h-4 mr-2" /> Parents
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => push('/family')}>
+                  <Users className="w-4 h-4 mr-2" /> Family
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => push('/friends')}>
+                  <Users2 className="w-4 h-4 mr-2" /> Friends
+                </DropdownMenuItem>
+              </>
+            )}
+            <DropdownMenuItem onClick={() => push('/change-password')}>
+              <KeyRound className="w-4 h-4 mr-2" /> Change Password
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+              <LogOut className="w-4 h-4" /> Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  };
 
   // Desktop Navbar Component
   const DesktopNavbar = () => (
@@ -553,17 +629,7 @@ export default function Navbar() {
   return (
     <header className="relative w-full bg-gradient-to-b from-black to-transparent text-white py-4 px-6">
       {isMobile ? <MobileNavbar /> : <DesktopNavbar />}
-
-      {/* Purple glow effect */}
-      <div className="absolute inset-x-0 top-0 z-20 h-full w-full pointer-events-none">
-        <Image
-          src="/bg.svg"
-          alt="Background Glow"
-          width={1920}
-          height={400}
-          className="w-full h-full object-cover pointer-events-none select-none"
-        />
-      </div>
+     
     </header>
   );
 }

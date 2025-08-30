@@ -7,7 +7,6 @@ import {
   collection,
   doc,
   getDoc,
-  onSnapshot,
   orderBy,
   query,
   setDoc,
@@ -18,6 +17,27 @@ import {
   Query,
 } from "firebase/firestore";
 
+// ----- Match (public) chat helpers -----
+// For demo: a public match chat with id "1". All authenticated firebase users can read/write.
+// Collection structure: matches/{matchId}/messages
+export async function sendMatchMessage(matchId: string, text: string) {
+  const me = auth.currentUser;
+  if (!me) throw new Error("Not signed in");
+  const msgCol = collection(db, "matches", matchId, "messages");
+  await addDoc(msgCol, {
+    text,
+    senderId: me.uid,
+    createdAt: serverTimestamp(),
+  });
+}
+
+export function messagesForMatch(matchId: string): Query<DocumentData> {
+  return query(
+    collection(db, "matches", matchId, "messages"),
+    orderBy("createdAt", "asc")
+  );
+}
+
 export async function startDirectChatByAppId(
   targetAppId: number | string,
   targetUserName?: string
@@ -27,10 +47,9 @@ export async function startDirectChatByAppId(
   const myUid = me.uid;
   const targetUid = toAppUid(targetAppId);
 
-  // Only ensure our own user exists (we can't create other users' documents)
   await ensureUserExists(myUid);
 
-  // Fetch the target user's displayName from Firebase
+ 
   let displayName = targetUserName;
   try {
     const targetUserRef = doc(db, "users", targetUid);
@@ -40,7 +59,10 @@ export async function startDirectChatByAppId(
       displayName = userData?.displayName || targetUserName;
     }
   } catch (error) {
-    console.log("Could not fetch target user displayName, using fallback:", error);
+    console.log(
+      "Could not fetch target user displayName, using fallback:",
+      error
+    );
   }
 
   const id = directConvId(myUid, targetUid);
@@ -69,18 +91,21 @@ export async function startDirectChatByAppId(
     if (displayName) {
       const existingData = snap.data();
       const currentUserNames = existingData?.userNames || {};
-      
+
       // Only update if the name is not already stored or is different
-      if (!currentUserNames[targetUid] || currentUserNames[targetUid] !== displayName) {
+      if (
+        !currentUserNames[targetUid] ||
+        currentUserNames[targetUid] !== displayName
+      ) {
         const updatedUserNames = {
           ...currentUserNames,
-          [targetUid]: displayName
+          [targetUid]: displayName,
         };
-        
+
         try {
           await updateDoc(ref, {
             userNames: updatedUserNames,
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
           });
         } catch {
           // Swallow error: conversation exists; name update is non-critical
@@ -137,10 +162,10 @@ export async function sendMessage(conversationId: string, text: string) {
   await addDoc(msgCol, {
     text,
     senderId: me.uid,
-  createdAt: serverTimestamp(),
+    createdAt: serverTimestamp(),
   });
   await updateDoc(doc(db, "conversations", conversationId), {
-  lastMessage: { text, senderId: me.uid, createdAt: serverTimestamp() },
+    lastMessage: { text, senderId: me.uid, createdAt: serverTimestamp() },
     updatedAt: serverTimestamp(),
   });
 }

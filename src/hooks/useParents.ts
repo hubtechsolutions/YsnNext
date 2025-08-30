@@ -1,5 +1,5 @@
 import fetch from "@/lib/fetch";
-import { FriendPayload, Friends } from "@/types/friends";
+import { FriendPayload, Friends, Kid } from "@/types/friends";
 import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -16,7 +16,8 @@ export const useParents = () => {
     frnd_address: "",
   };
 
-  const [kids, setKids] = useState<any>([]);
+  // Kids list (fetched elsewhere if needed). Keeping type for UI parity.
+  const kids: Kid[] = [];
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,10 +34,10 @@ export const useParents = () => {
   const handleFetchParents = async (): Promise<Friends[] | void> => {
     try {
       setLoading(true);
-      const response: AxiosResponse<Friends[] | any> = await fetch.get(
+      const response: AxiosResponse<{ data: Friends[] }> = await fetch.get(
         "/parent/lists"
       );
-      setParents(response?.data?.data);
+      setParents(response?.data?.data ?? []);
     } catch (error) {
       console.log("error at fetching the parents list", error);
     } finally {
@@ -86,7 +87,9 @@ export const useParents = () => {
 
   // function to handle the parent form field data changes
   const handleValueChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setNewParent((prev) => ({
@@ -116,10 +119,11 @@ export const useParents = () => {
       } else {
         toast.error("Failed to add parent. Please try again.");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error adding parent:", error);
-      if (error?.response?.data?.message) {
-        toast.error(error.response.data.message);
+      const err = error as { response?: { data?: { message?: string } } };
+      if (err?.response?.data?.message) {
+        toast.error(err.response.data.message);
       } else {
         toast.error("An error occurred while adding the parent.");
       }
@@ -196,10 +200,11 @@ export const useParents = () => {
       } else {
         toast.error("Failed to delete parent. Please try again.");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error deleting parent:", error);
-      if (error?.response?.data?.message) {
-        toast.error(error.response.data.message);
+      const err = error as { response?: { data?: { message?: string } } };
+      if (err?.response?.data?.message) {
+        toast.error(err.response.data.message);
       } else {
         toast.error("An error occurred while deleting the parent.");
       }

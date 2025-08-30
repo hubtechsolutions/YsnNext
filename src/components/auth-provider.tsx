@@ -124,21 +124,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
             
             if (currentState.isAuthenticated && currentState.user) {
               console.log('AuthProvider: Redirecting based on user type:', userData.user_type)
-              // Clear the URL parameters by redirecting to the appropriate dashboard
+              // Redirect to destination based on user type
               if (userData.user_type === USER_TYPE.SUPER_ADMIN) {
-                // Super Admin
                 router.replace('/dashboard')
               } else if (userData.user_type === USER_TYPE.COACH) {
-                // Coach
                 router.replace('/dashboard/coach')
-              } else if (
-                userData.user_type === USER_TYPE.ORGANIZATION ||
-                userData.user_type === USER_TYPE.PLAYER
-              ) {
-                // Organization or Player → Home
+              } else if (userData.user_type === USER_TYPE.PLAYER) {
+                router.replace('/player-profile')
+              } else if (userData.user_type === USER_TYPE.ORGANIZATION) {
                 router.replace('/')
               } else {
-                // Unknown user type, redirect to landing page
                 router.replace('/')
               }
             } else {
@@ -157,10 +152,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
                   router.replace('/dashboard')
                 } else if (userData.user_type === USER_TYPE.COACH) {
                   router.replace('/dashboard/coach')
-                } else if (
-                  userData.user_type === USER_TYPE.ORGANIZATION ||
-                  userData.user_type === USER_TYPE.PLAYER
-                ) {
+                } else if (userData.user_type === USER_TYPE.PLAYER) {
+                  router.replace('/player-profile')
+                } else if (userData.user_type === USER_TYPE.ORGANIZATION) {
                   router.replace('/')
                 } else {
                   router.replace('/')
@@ -211,12 +205,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } else if (user.user_type === USER_TYPE.COACH && (pathname === "/login" || pathname === "/dashboard")) {
           console.log('AuthProvider: Redirecting coach to coach dashboard')
           router.push("/dashboard/coach")
-        // Org/Player → send to home if on login or restricted dashboards
+        // Player → player-profile, Org → home if on login or restricted dashboards
         } else if (
-          (user.user_type === USER_TYPE.ORGANIZATION || user.user_type === USER_TYPE.PLAYER) &&
+          user.user_type === USER_TYPE.PLAYER &&
           (pathname === "/login" || pathname.startsWith("/dashboard"))
         ) {
-          console.log('AuthProvider: Redirecting organization/player to home')
+          console.log('AuthProvider: Redirecting player to player profile')
+          router.push("/player-profile")
+        } else if (
+          user.user_type === USER_TYPE.ORGANIZATION &&
+          (pathname === "/login" || pathname.startsWith("/dashboard"))
+        ) {
+          console.log('AuthProvider: Redirecting organization to home')
           router.push("/")
         }
       }

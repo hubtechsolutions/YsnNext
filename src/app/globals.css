@@ -162,6 +162,13 @@
     font-family: 'Poppins', var(--font-sans), sans-serif;
     letter-spacing: var(--tracking-normal);
   }
+
+  /* Hide scrollbars utility (used for horizontal tab nav) */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
   
   /* Custom scrollbar styling for main page scroll */
   body {

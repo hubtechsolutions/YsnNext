@@ -143,18 +143,6 @@ const UpcomingMatch: React.FC<UpcomingMatchProps> = ({
               Upcoming Matches
             </h2>
           </div>
-          {/* {
-                            isOrganisation &&
-                            <div className="flex items-center gap-5">
-                                {
-                                    items.map((item) => (
-                                        <div key={item} className={`${selectedCategory === item ? "bg-[#3705DC]" : ""} px-4 py-1 rounded-full transition-all duration-500 ease-in-out cursor-pointer`} onClick={() => setSelectedCategory(item)}>
-                                            <p className="font-semibold text-sm ">{item}</p>
-                                        </div>
-                                    ))
-                                }
-                            </div>
-                        } */}
           <div className="flex items-center gap-2 md:gap-4 transition-all duration-500 ease-in-out">
             {/* <ShareEventModal/> */}
             <button
@@ -169,11 +157,14 @@ const UpcomingMatch: React.FC<UpcomingMatchProps> = ({
           </div>
         </div>
         {/* Weekdays */}
-          <div
-            className="flex flex-col lg:flex-row gap-2 h-full xl:min-h-[500px]"
+        <div
+          className="flex flex-col lg:flex-row gap-2 h-full xl:min-h-[500px]"
           id="events_section_demo"
         >
-            <div ref={leftColRef} className="flex flex-col h-full w-full lg:w-[65%]">
+          <div
+            ref={leftColRef}
+            className="flex flex-col h-full w-full lg:w-[65%]"
+          >
             <MyCalender
               events={events}
               modalOpen={modalOpen}
@@ -197,17 +188,17 @@ const UpcomingMatch: React.FC<UpcomingMatchProps> = ({
               handleEdit={(e) => handleEdit(e)}
             />
           </div>
-            <div
-              className="relative md:p-4 pt-0 w-full lg:w-[35%] bg-gradient-to-b from-[#0d0c12] to-[#0d0918] rounded-2xl flex flex-col h-full"
-              style={{ height: leftHeight ? `${leftHeight}px` : undefined }}
-            >
+          <div
+            className="relative md:p-4 pt-0 w-full lg:w-[35%] bg-gradient-to-b from-[#0d0c12] to-[#0d0918] rounded-2xl flex flex-col h-full"
+            style={{ height: leftHeight ? `${leftHeight}px` : undefined }}
+          >
             <div className="flex items-center justify-between">
               <p className="bg-transparent top-0 w-full  p-4 text-lg font-semibold h-[40px] mb-4">
                 {format(new Date(), "MMMM yyyy")}
               </p>
               <div>{/* Placeholder for future export button */}</div>
             </div>
-              <div className="flex flex-col gap-5 custom-scrollbar flex-1 min-h-0 overflow-y-auto">
+            <div className="flex flex-col gap-5 custom-scrollbar flex-1 min-h-0 overflow-y-auto">
               {events.length > 0 &&
                 events.map((event, index: number) => (
                   <div
