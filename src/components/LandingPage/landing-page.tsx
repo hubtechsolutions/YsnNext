@@ -60,7 +60,7 @@ export function LandingPage() {
         </div>
 
         {/* Schedule Section */}
-        <div className="mt-20 w-full">
+        <div className="mt-20 container mx-auto">
           <Schedule />
         </div>
 

@@ -3,10 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Share2, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, Share2, Star } from "lucide-react";
+
 import { useAuthStore } from "@/lib/auth-store";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import ShareModal from "@/components/Common/ShareModal";
 import ChatSection from "./ChatSection";
 
@@ -17,19 +18,25 @@ type RosterItem = {
 };
 
 const sampleRosters: RosterItem[] = [
-  { id: 1, fullName: "Alex Johnson", profileImage: "/ysnlogo.webp" },
-  { id: 2, fullName: "Mia Thompson", profileImage: "/ysnlogo.webp" },
-  { id: 3, fullName: "Jordan Lee", profileImage: "/ysnlogo.webp" },
-  { id: 4, fullName: "Sam Taylor", profileImage: "/ysnlogo.webp" },
-  { id: 5, fullName: "Riley Parker", profileImage: "/ysnlogo.webp" },
-  { id: 6, fullName: "Casey Morgan", profileImage: "/ysnlogo.webp" },
-  { id: 7, fullName: "Drew Carter", profileImage: "/ysnlogo.webp" },
+  { id: 1, fullName: "Alex Johnson", profileImage: "/landing/player.webp" },
+  { id: 2, fullName: "Mia Thompson", profileImage: "/landing/player.webp" },
+  { id: 3, fullName: "Jordan Lee", profileImage: "/landing/player.webp" },
+  { id: 4, fullName: "Sam Taylor", profileImage: "/landing/player.webp" },
+  { id: 5, fullName: "Riley Parker", profileImage: "/landing/player.webp" },
+  { id: 6, fullName: "Casey Morgan", profileImage: "/landing/player.webp" },
+  { id: 7, fullName: "Drew Carter", profileImage: "/landing/player.webp" },
+  { id: 8, fullName: "Taylor Brooks", profileImage: "/landing/player.webp" },
+  { id: 9, fullName: "Morgan Ellis", profileImage: "/landing/player.webp" },
+  { id: 10, fullName: "Quinn Ramirez", profileImage: "/landing/player.webp" },
+  { id: 11, fullName: "Jamie Foster", profileImage: "/landing/player.webp" },
+  { id: 12, fullName: "Avery Collins", profileImage: "/landing/player.webp" },
+  { id: 13, fullName: "Charlie Nguyen", profileImage: "/landing/player.webp" },
+  { id: 14, fullName: "Parker James", profileImage: "/landing/player.webp" },
 ];
 
 export default function Streaming() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated } = useAuthStore();
-  const router = useRouter();
   const [joinedStreams, setJoinedStreams] = useState<number[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -77,33 +84,29 @@ export default function Streaming() {
           <Button
             onClick={handleShare}
             variant="default"
-            className="rounded-full h-9"
+            className="inline-flex items-center text-[10px] md:text-[14px] justify-center whitespace-nowrap text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90 py-2 relative h-8 md:h-10 px-2 md:px-4 overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium transition-all duration-200 group rounded-full w-fit"
           >
             <Share2 className="w-4 h-4 mr-2" /> Share
           </Button>
         </div>
 
         <div className="relative">
-          {/* Unified auth overlay */}
-          {(!isAuthenticated || !user) && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center">
-              <div className="bg-black/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-border text-center max-w-md mx-4">
-                <h3 className="text-lg font-semibold mb-3">
-                  Log in to Continue
-                </h3>
-                <p className="text-foreground/90 text-sm mb-5 leading-relaxed">
-                  Sign in to watch the live stream, join the roster, and chat
-                  with others in real-time.
-                </p>
-                <Button
-                  className="rounded-full w-full"
-                  onClick={() => router.push("/login")}
-                >
-                  Log in
-                </Button>
-              </div>
-            </div>
-          )}
+          {/* Auth overlay (shown when not logged in) */}
+          <div
+            className={`${!isAuthenticated || !user ? "bg-black/80 backdrop-blur-custom absolute h-full w-full top-0 left-0 z-30 flex flex-col text-[#FFFFFF] items-center justify-center gap-5" : "hidden"} transition-all duration-500 ease-in-out`}
+          >
+            <Lock size={50} />
+            <p className="text-center w-[80%] md:w-[50%] xl:w-[30%] text-[20px]">
+              Jump into this exciting streaming experience just log in and be a
+              part of it
+            </p>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full h-[48px] text-[16px] ring-offset-background focus-visible:outline-none font-bold focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 w-[150px] shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-500 ease-in-out"
+            >
+              Log in
+            </Link>
+          </div>
 
           <div
             className={`grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-4 gap-6 items-stretch transition-filter ${
@@ -196,7 +199,7 @@ export default function Streaming() {
                               : "outline"
                           }
                         >
-                          {joinedStreams.includes(kid.id) ? "Joined" : "Join"}
+                          {joinedStreams.includes(kid.id) ? "Following" : "Follow"}
                         </Button>
                       </div>
                     ))}

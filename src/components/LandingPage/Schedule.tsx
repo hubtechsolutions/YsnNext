@@ -107,7 +107,7 @@ export default function Schedule() {
   return (
     <section
       id="schedule_section"
-      className="bg-black text-white h-full md:px-6 py-[5%] overflow-hidden"
+      className="bg-black text-white h-full md:px-6 py-[5%] "
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
